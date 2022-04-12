@@ -39,50 +39,76 @@ op.add_argument('--disable-dev-shm-usage')
 prefs = {'download.default_directory' : d_path}
 op.add_experimental_option('prefs', prefs)
 
+print("[+] Starting Chrome...")
 driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),chrome_options=op)
 # driver = webdriver.Chrome(chrome_options=op)
 
 
 driver.set_window_size(1536 , 900)
+print("[+] Chrome started")
 driver.get(cookies)
+print("[+] URL of Cookies loaded")
 
 
+print("[+] Searching For Download Button...")
 wait(driver,10).until(EC.element_to_be_clickable((By.XPATH,'//button[text()="Download File"]')))
-d_btn = driver.find_element(By.XPATH,'//button[text()="Download File"]')
-d_btn.click()
+print("[+] Download Button Found")
+driver.find_element(By.XPATH,'//button[text()="Download File"]').click()
+print("[+] Download Button Clicked")
+
 
 
 time.sleep(20)
+print("[+] Download Completed...")
 
+
+print("[+] Loading Cookies...")
 cookies = pickle.load(open(d_path+"/cookies.pkl", "rb"))
+print("[+] Loading KuCoin Website")
 driver.get(URL)
+print("[+] KuCoin Website Loaded")
 
 for cookie in cookies:
     driver.add_cookie(cookie)
+
+print("[+] Cookies Loaded")
+
     
 time.sleep(2)
+print("[+] Refreshing Page")
 driver.refresh()
+print("[+] Page Refreshed")
 
 
 
+print("[+] Searching For Email Label...")
 wait(driver, 20).until(EC.presence_of_element_located((By.XPATH,'//div[text()="Email"]')))
-email_label = driver.find_element(By.XPATH,'//div[text()="Email"]')
-email_label.click()
+driver.find_element(By.XPATH,'//div[text()="Email"]').click()
+print("[+] Email Label Clicked...")
 
 
+print("[+] Searching For Email Input...")
 wait(driver,20).until(EC.presence_of_element_located((By.XPATH,'//input[@placeholder="Email"]')))
+print("[+] Email Input Found")
 
 
-email_inp = driver.find_element(By.XPATH,"//input[@placeholder='Email']")
-email_inp.send_keys(mail)
-code_box = driver.find_element(By.XPATH,'//label[text()="Email verification code"]/parent::div/div/input')
-code_box.send_keys(code)
-pwd_inp = driver.find_element(By.XPATH,"//input[@type='password']")
-pwd_inp.send_keys("Sanaur@#$123")
-ref_box = driver.find_element(By.XPATH,'//span[contains(text(),"Referral Code (Optional)")]/parent::div/following-sibling::div/div/input')
-ref_box.send_keys(refer)
-submit = driver.find_element(By.XPATH,'//span[text()="Sign Up"]/parent::button')
-submit.click()
+driver.find_element(By.XPATH,"//input[@placeholder='Email']").send_keys(mail)
+print("[+] Email Input Filled")
+
+
+driver.find_element(By.XPATH,'//label[text()="Email verification code"]/parent::div/div/input').send_keys(code)
+print("[+] Email Verification Code Filled")
+
+driver.find_element(By.XPATH,"//input[@type='password']").send_keys("Sanaur@#$123")
+print("[+] Password Filled")
+
+driver.find_element(By.XPATH,'//span[contains(text(),"Referral Code (Optional)")]/parent::div/following-sibling::div/div/input').send_keys(refer)
+print("[+] Referral Code Filled")
+
+driver.find_element(By.XPATH,'//span[text()="Sign Up"]/parent::button').click()
+print("[+] Sign Up Button Clicked")
+
+print("[+] Waiting For Sign Up  To Be Completed...")
 try:
     wait(driver,30).until(EC.presence_of_element_located((By.XPATH,'//*[contains(text(),"Success")]')))
     print("Success")
